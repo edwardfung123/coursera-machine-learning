@@ -80,28 +80,52 @@ end;
 J = J / m + lambda/2/m * (sum(Theta1(:, 2:end)(:).^2) + sum(Theta2(:, 2:end)(:).^2));
 % [prob, p] = max(a3, [], 2);
 
-% backpropagate
-d3 = zeros(m, num_labels);
-for k = 1:num_labels
-    y_k = (y == k);
-    predict_k = a3(:, k);
-    d3(:, k) = predict_k - y_k;
+Delta1 = zeros(size(Theta1));
+Delta2 = zeros(size(Theta2));
+
+for i = 1:m
+    y_i = zeros(num_labels, 1);
+    y_i(y(i)) = 1;
+    predict_i = a3(i,:)';
+    d3 = predict_i - y_i;
+
+    d2 = Theta2' * d3;
+    d2 = d2(2:end) .* sigmoidGradient(z2(i, :)');
+    Delta2 = Delta2 + d3 * a2(i, :);
+    Delta1 = Delta1 + d2 * a1(i, :);
 end;
-size(z2)
-size(d3)
-Theta2
-Theta1
-d2 = (d3 * Theta2')
-size(d2)
-d2 = d2 .* sigmoidGradient(z2);
 
-d2
-% d3 % correct
+tmp = Theta1;
+tmp(:, 1) = 0;
+Theta1_grad = Delta1/m + lambda/m * tmp;
 
-% z2 % correct
-% z3 % assume correct
-% a2 % correct
-% a3 % correct
+tmp = Theta2;
+tmp(:, 1) = 0;
+Theta2_grad = Delta2/m + lambda/m * tmp;
+
+% backup
+% % backpropagate
+% d3 = zeros(m, num_labels);
+% for k = 1:num_labels
+%     y_k = (y == k);
+%     predict_k = a3(:, k);
+%     d3(:, k) = predict_k - y_k;
+% end;
+% % size(z2)
+% % Theta1
+% % d2 = (Theta2' * d3')' % work
+% d2 = (d3 * Theta2);
+% d2 = d2(:, 2:end); % remove the bias
+% d2 = d2 .* sigmoidGradient(z2);
+
+% Delta2 = a2 * d3
+% % d2 % correct
+% % d3 % correct
+
+% % z2 % correct
+% % z3 % assume correct
+% % a2 % correct
+% % a3 % correct
 
 
 
