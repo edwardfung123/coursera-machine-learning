@@ -83,14 +83,21 @@ J = J / m + lambda/2/m * (sum(Theta1(:, 2:end)(:).^2) + sum(Theta2(:, 2:end)(:).
 Delta1 = zeros(size(Theta1));
 Delta2 = zeros(size(Theta2));
 
+% expand y to a matrix
+Y = zeros(m, num_labels);
 for i = 1:m
-    y_i = zeros(num_labels, 1);
-    y_i(y(i)) = 1;
-    predict_i = a3(i,:)';
-    d3 = predict_i - y_i;
+    Y(i, y(i)) = 1;
+end;
 
-    d2 = Theta2' * d3;
-    d2 = d2(2:end) .* sigmoidGradient(z2(i, :)');
+D3 = a3 - Y;
+D2 = D3 * Theta2;
+D2 = D2(:, 2:end) .* sigmoidGradient(z2);
+% D2 = D2';
+% D2;
+
+for i = 1:m
+    d3 = D3(i, :)';
+    d2 = D2(i, :)';
     Delta2 = Delta2 + d3 * a2(i, :);
     Delta1 = Delta1 + d2 * a1(i, :);
 end;
