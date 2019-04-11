@@ -26,17 +26,19 @@ centroids = zeros(K, n);
 % Note: You can use a for-loop over the centroids to compute this.
 %
 
-for i = 1:rows(X)
-    pt = X(i, :);
-    k = idx(i);
-    c = centroids(k, :);
-    centroids(k, :) = c + pt;
-end
+% for i = 1:rows(X)
+%     pt = X(i, :);
+%     k = idx(i);
+%     c = centroids(k, :);
+%     centroids(k, :) = c + pt;
+% end
 
 for k = 1:K
-    n_points = sum(idx == k);
+    mask = idx == k
+    n_points = sum(mask)
+    pts = X .* mask
     if n_points > 0
-        centroids(k, :) = centroids(k, :) ./ n_points;
+        centroids(k) = sum(pts, 2) / n_points;
     end
 end
 
