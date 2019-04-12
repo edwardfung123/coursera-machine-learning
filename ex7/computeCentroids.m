@@ -33,16 +33,35 @@ centroids = zeros(K, n);
 %     centroids(k, :) = c + pt;
 % end
 
+% for k = 1:K
+%     mask = idx == k;
+%     n_points = sum(mask);
+%     pts = X .* mask;
+%     if n_points > 0
+%         centroids(k, :) = sum(pts) / n_points;
+%     end
+% end
+
+pts = zeros(m, n*K);
+n_points = ones(1, n*K);
 for k = 1:K
-    mask = idx == k
-    n_points = sum(mask)
-    pts = X .* mask
-    if n_points > 0
-        centroids(k) = sum(pts, 2) / n_points;
-    end
+    mask = idx == k;
+    np = sum(mask);
+    if (np > 0)
+      n_points(:, n*(k-1)+1:n*k) = np * ones(1, n);
+    endif
+
+    tmp = X .* mask;
+    pts(:, n*(k-1)+1:n*k) = tmp;
 end
 
+% sum(pts);
+% n_points
+tmp = sum(pts) ./ n_points;
 
+for k = 1:K
+  centroids(k, :) = tmp(n*(k-1)+1:n*k);
+end
 
 
 % =============================================================
