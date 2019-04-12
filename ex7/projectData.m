@@ -21,10 +21,11 @@ Z = zeros(size(X, 1), K);
 eigenvectors = U(:, 1:K);
 
 % WIP
-for i = 1:rows(X)
-  x = X(i, :)';
-  Z(i,:) = x' * eigenvectors;
-end
+% for i = 1:rows(X)
+%   x = X(i, :)';
+%   Z(i,:) = x' * eigenvectors;
+% end
+Z = X * eigenvectors;
 
 % =============================================================
 
