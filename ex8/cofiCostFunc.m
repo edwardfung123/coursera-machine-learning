@@ -11,7 +11,7 @@ X = reshape(params(1:num_movies*num_features), num_movies, num_features);
 Theta = reshape(params(num_movies*num_features+1:end), ...
                 num_users, num_features);
 
-            
+
 % You need to return the following values correctly
 J = 0;
 X_grad = zeros(size(X));
@@ -21,7 +21,7 @@ Theta_grad = zeros(size(Theta));
 % Instructions: Compute the cost function and gradient for collaborative
 %               filtering. Concretely, you should first implement the cost
 %               function (without regularization) and make sure it is
-%               matches our costs. After that, you should implement the 
+%               matches our costs. After that, you should implement the
 %               gradient and use the checkCostFunction routine to check
 %               that the gradient is correct. Finally, you should implement
 %               regularization.
@@ -29,20 +29,48 @@ Theta_grad = zeros(size(Theta));
 % Notes: X - num_movies  x num_features matrix of movie features
 %        Theta - num_users  x num_features matrix of user features
 %        Y - num_movies x num_users matrix of user ratings of movies
-%        R - num_movies x num_users matrix, where R(i, j) = 1 if the 
+%        R - num_movies x num_users matrix, where R(i, j) = 1 if the
 %            i-th movie was rated by the j-th user
 %
 % You should set the following variables correctly:
 %
-%        X_grad - num_movies x num_features matrix, containing the 
+%        X_grad - num_movies x num_features matrix, containing the
 %                 partial derivatives w.r.t. to each element of X
-%        Theta_grad - num_users x num_features matrix, containing the 
+%        Theta_grad - num_users x num_features matrix, containing the
 %                     partial derivatives w.r.t. to each element of Theta
 %
 
+% implementation 3 (vectorized)
+predictions = X * Theta';
+J = (predictions - Y) .* R;
+J = sum(sum((J .^ 2))) / 2;
 
+% implementation 2
+% predictions = zeros(num_movies, num_users);
+% for i = 1:rows(X)
+%     movie = X(i, :);
+%     for j = 1:rows(Theta)
+%         if R(i, j) == 1
+%             user = Theta(j, :);
+%             predictions(i, j) = user * movie';
+%         endif
+%     end
+% end
+% J = predictions - Y .* R;
+% J = sum(sum((J .^ 2))) / 2;
 
-
+% implementation 1
+% for i = 1:rows(X)
+%     movie = X(i, :);
+%     for j = 1:rows(Theta)
+%         if R(i, j) == 1
+%             user = Theta(j, :);
+%             predict = user * movie';
+%             J = J + (predict - Y(i, j)) .^ 2;
+%         endif
+%     end
+% end
+% J = J / 2;
 
 
 
