@@ -42,18 +42,23 @@ Theta_grad = zeros(size(Theta));
 
 % implementation 3 (vectorized)
 predictions = X * Theta';
-err = (predictions - Y);
-J = err .* R;
-J = sum(sum((J .^ 2))) / 2;
+err = (predictions - Y) .* R;
+J = sum(sum((err .^ 2))) / 2 + ...
+        lambda / 2 * sum(sum(Theta .^ 2)) + ...
+        lambda / 2 * sum(sum(X .^ 2));
 
 % implement X_grad with for-loop
-for i = 1:num_movies
-    X_tmp = X(i, :)
-    idx = find(R(i, :) == 1);
-    Theta_tmp = Theta(idx, :)
-    Y_tmp = Y(i, idx);
-    X_grad(i, :) = (X_tmp * Theta_tmp' - Y_tmp) * Theta_tmp;
-end
+% for i = 1:num_movies
+%     X_tmp = X(i, :)
+%     idx = find(R(i, :) == 1);
+%     Theta_tmp = Theta(idx, :)
+%     Y_tmp = Y(i, idx);
+%     X_grad(i, :) = (X_tmp * Theta_tmp' - Y_tmp) * Theta_tmp;
+% end
+
+% implement X_grad with vector
+X_grad = err * Theta + lambda * X;
+Theta_grad = err' * X + lambda * Theta;
 
 % implementation 2
 % predictions = zeros(num_movies, num_users);
